@@ -1,29 +1,13 @@
-import { useMemo } from 'react'
-import { Token } from '@/types/token'
-import { SortField, SortDirection } from '@/types/token'
-
-interface SortConfig {
-  field: SortField | null
-  direction: SortDirection
-}
-
-export function useSortedTokens(tokens: Token[], sortConfig: SortConfig) {
-  const sortedTokens = useMemo(() => {
-    if (!sortConfig.field) return tokens
-
-    const sorted = [...tokens].sort((a, b) => {
-      const aValue = a[sortConfig.field!]
-      const bValue = b[sortConfig.field!]
-
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
-      }
-
-      return 0
-    })
-
-    return sorted
-  }, [tokens, sortConfig])
-
-  return sortedTokens
+﻿import { useMemo } from "react";
+import { Token, SortField, SortDirection } from "@/types/token";
+export default function useSortedTokens(tokens:Token[],{field,direction}:{field:SortField|null;direction:SortDirection}){
+  return useMemo(()=>{
+    if(!field) return tokens;
+    const s=[...tokens].sort((a:any,b:any)=>{
+      const va=a[field], vb=b[field];
+      if(typeof va==="string" && typeof vb==="string") return va.localeCompare(vb);
+      const na=Number(va??0), nb=Number(vb??0); return na-nb;
+    });
+    return direction==="desc"?s.reverse():s;
+  },[tokens,field,direction]);
 }

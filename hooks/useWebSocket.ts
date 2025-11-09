@@ -1,31 +1,30 @@
-import { useEffect, useCallback, useRef } from 'react'
-import { useAppDispatch } from '@/store/hooks'
-import { updateTokenPrice } from '@/store/slices/tokenSlice'
+﻿"use client";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateTokenPrice, setTokens } from "@/store/slices/tokenSlice";
+import { useTokenDataQuery } from "./useTokenData";
 
-export function useWebSocket() {
-  const dispatch = useAppDispatch()
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+/** mounts query -> put data to redux once, then push WS-like ticks */
+export default function useWebSocket(){
+  const dispatch = useAppDispatch();
+  const { data } = useTokenDataQuery();
+  const ids = useAppSelector(s=>s.tokens.items.map(t=>t.id));
 
-  const simulatePriceUpdate = useCallback(() => {
-    const tokenIds = ['token-1', 'token-2', 'token-3', 'token-4', 'token-5']
-    const randomId = tokenIds[Math.floor(Math.random() * tokenIds.length)]
-    const priceChange = (Math.random() - 0.5) * 0.1
-    const basePrice = 0.0001 + Math.random() * 0.01
-    
-    dispatch(updateTokenPrice({
-      id: randomId,
-      price: basePrice,
-      priceChange24h: priceChange * 100,
-    }))
-  }, [dispatch])
+  // seed redux from query (1x)
+  useEffect(()=>{
+    if(data && ids.length===0){ dispatch(setTokens(data)); }
+  },[data, ids.length, dispatch]);
 
-  useEffect(() => {
-    intervalRef.current = setInterval(simulatePriceUpdate, 3000)
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [simulatePriceUpdate])
+  // mock socket
+  useEffect(()=>{
+    if(ids.length===0) return;
+    const tick = () => {
+      const id = ids[Math.floor(Math.random()*ids.length)];
+      const price = Number((Math.random()*10).toFixed(6));
+      const change24h = Number(((Math.random()-0.5)*20).toFixed(2));
+      dispatch(updateTokenPrice({ id, price, change24h }));
+    };
+    const h = setInterval(tick, 3000);
+    return ()=>clearInterval(h);
+  },[ids, dispatch]);
 }

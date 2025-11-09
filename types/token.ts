@@ -1,34 +1,16 @@
 ﻿export interface Token {
-  id: string
-  name: string
-  symbol: string
-  contractAddress: string
-  price: number
-  priceChange24h: number
-  marketCap: number
-  volume24h: number
-  liquidity: number
-  holders: number
-  age: number
-  transactions: number
-  numBuys: number
-  numSells: number
-  verified: boolean
-  honeypot: boolean
-  devHolding: number
-  top10Holders: number
-  snipersPercent: number
-  insidersPercent: number
-  priceDirection?: "up" | "down" | "neutral"
-  lastUpdate?: number
-  category?: "new-pairs" | "final-stretch" | "migrated"
-  trending?: boolean
+  id: string; name: string; symbol: string;
+  price: number; change24h: number; volume: number; volume24h: number;
+  marketCap: number; liquidity: number; holders: number;
+  category: "new-pairs" | "final-stretch" | "migrated";
+  risk: "high" | "low"; verified: boolean; honeypot: boolean;
+  lastUpdate: string; contractAddress: string;
+  totalSupply: number; circulatingSupply: number;
+  age: number;
+  devHolding: number; top10Holders: number; snipersPercent: number; insidersPercent: number;
+  priceChange24h?: number; numBuys?: number; numSells?: number; transactions?: number;
 }
 
-export interface SortState {
-  column: keyof Token | null
-  direction: "asc" | "desc"
-}
-
-export type SortField = keyof Token
-export type SortDirection = "asc" | "desc"
+export type SortField = keyof Token;
+export type SortDirection = "asc" | "desc";
+export type SortState = { column: SortField | null; direction: SortDirection };

@@ -1,90 +1,31 @@
 ﻿"use client";
-
-import React, { useState, useEffect, useRef } from "react";
-import { TrendingUp, TrendingDown, Shield, AlertTriangle } from "lucide-react";
+import React,{memo,useRef,useEffect,useState,useMemo} from "react";
 import { Token } from "@/types/token";
-
-interface TokenRowProps {
-  token: Token;
-}
-
-export default function TokenRow({ token }: TokenRowProps) {
-  const [priceAnimation, setPriceAnimation] = useState<"up" | "down" | null>(null);
-  const prevPriceRef = useRef(token.price);
-
-  useEffect(() => {
-    if (prevPriceRef.current !== token.price) {
-      setPriceAnimation(token.price > prevPriceRef.current ? "up" : "down");
-      prevPriceRef.current = token.price;
-      const timer = setTimeout(() => setPriceAnimation(null), 600);
-      return () => clearTimeout(timer);
-    }
-  }, [token.price]);
-
-  const formatPrice = (price: number) => {
-    return price < 0.01 ? `$${price.toFixed(8)}` : `$${price.toFixed(4)}`;
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
-    if (num >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
-    if (num >= 1e3) return `$${(num / 1e3).toFixed(2)}K`;
-    return `$${num.toFixed(2)}`;
-  };
-
-  const getColorForChange = (change: number) => {
-    if (change > 0) return "text-green-400";
-    if (change < 0) return "text-red-400";
-    return "text-gray-400";
-  };
-
-  return (
-    <tr className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
-      <td className="px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-            {token.symbol.charAt(0)}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-white">{token.name}</span>
-              {token.verified && <Shield className="w-4 h-4 text-blue-400" />}
-              {token.honeypot && <AlertTriangle className="w-4 h-4 text-red-400" />}
-            </div>
-            <span className="text-sm text-gray-400">{token.symbol}</span>
-          </div>
-        </div>
+import TokenDetailsModal from "./TokenDetailsModal";
+type Props={token:Token};
+export default memo(function TokenRow({token}:Props){
+  const [open,setOpen]=useState(false);
+  const prev=useRef(token.price); const [flash,setFlash]=useState("");
+  useEffect(()=>{ const dir=token.price>prev.current?"price-up":token.price<prev.current?"price-down":""; if(dir){ setFlash(dir); const t=setTimeout(()=>setFlash(""),600); return()=>clearTimeout(t);} prev.current=token.price; },[token.price]);
+  const pct=useMemo(()=>`${token.change24h>=0?"+":""}${token.change24h.toFixed(2)}%`,[token.change24h]);
+  const fmt=(n:number)=>Math.round(n).toLocaleString();
+  return(<>
+    <tr className="hover:bg-gray-800/30 transition-colors">
+      <td className="px-4 py-3 text-white">
+        <span className="underline decoration-dotted" title={`Contract: ${token.contractAddress}`}>{token.name}</span>
+        {token.verified && <span className="ml-2 text-blue-400" title="Verified">✔</span>}
+        {token.honeypot && <span className="ml-2 text-red-400" title="Honeypot risk">⚠</span>}
       </td>
-      <td className="px-4 py-4">
-        <div className={`font-mono transition-all duration-300 text-white ${
-          priceAnimation === "up" ? "text-green-400" : priceAnimation === "down" ? "text-red-400" : ""
-        }`}>
-          {formatPrice(token.price)}
-        </div>
-      </td>
-      <td className="px-4 py-4">
-        <div className={`flex items-center gap-1 font-medium ${getColorForChange(token.priceChange24h)}`}>
-          {token.priceChange24h > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-          {token.priceChange24h.toFixed(2)}%
-        </div>
-      </td>
-      <td className="px-4 py-4 text-gray-300">{formatNumber(token.marketCap)}</td>
-      <td className="px-4 py-4 text-gray-300">{formatNumber(token.volume24h)}</td>
-      <td className="px-4 py-4 text-gray-300">{formatNumber(token.liquidity)}</td>
-      <td className="px-4 py-4 text-gray-300">{token.holders.toLocaleString()}</td>
-      <td className="px-4 py-4 text-gray-400">{token.age}h</td>
-      <td className="px-4 py-4">
-        <div className="flex items-center gap-3 text-sm">
-          <span className="text-green-400">{token.numBuys}</span>
-          <span className="text-gray-500">/</span>
-          <span className="text-red-400">{token.numSells}</span>
-        </div>
-      </td>
-      <td className="px-4 py-4">
-        <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors">
-          View
-        </button>
-      </td>
+      <td className="px-4 py-3 text-gray-300">{token.symbol}</td>
+      <td className={`px-4 py-3 text-right text-gray-100 price-flash ${flash}`}>{`$${token.price.toFixed(6)}`}</td>
+      <td className={`px-4 py-3 text-right ${token.change24h>=0?"text-green-400":"text-red-400"}`}>{pct}</td>
+      <td className="px-4 py-3 text-right text-gray-200">{fmt(token.volume24h)}</td>
+      <td className="px-4 py-3 text-right text-gray-200">{fmt(token.marketCap)}</td>
+      <td className="px-4 py-3 text-right text-gray-200">{fmt(token.liquidity)}</td>
+      <td className="px-4 py-3 text-right text-gray-200">{token.holders.toLocaleString()}</td>
+      <td className="px-4 py-3 text-right text-gray-200"><span className="underline decoration-dotted" title={`Updated: ${new Date(token.lastUpdate).toLocaleString()}`}>{token.age ?? 0}</span></td>
+      <td className="px-4 py-3 text-right"><button className="btn" onClick={()=>setOpen(true)}>Details</button></td>
     </tr>
-  );
-}
+    {open && <TokenDetailsModal token={token} onClose={()=>setOpen(false)} />}
+  </>);
+});

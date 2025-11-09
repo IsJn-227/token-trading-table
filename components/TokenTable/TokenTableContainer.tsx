@@ -1,83 +1,46 @@
 ﻿"use client";
-
 import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/index";
+import { useAppSelector } from "@/store/hooks";
+import { Token } from "@/types/token";
+import AxiomSection from "./AxiomSection";
 import TokenTable from "./TokenTable";
+import useWebSocket from "@/hooks/useWebSocket";
 import { useTokenData } from "@/hooks/useTokenData";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import LoadingSpinner from "../ui/LoadingSpinner";
-import ErrorMessage from "../ui/ErrorMessage";
+
+const categories: Token["category"][] = ["new-pairs", "final-stretch", "migrated"];
+const titleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function TokenTableContainer() {
-  useTokenData();
+  const { loading, error } = useTokenData(); // wrapper returns {loading,error,data}
   useWebSocket();
 
-  const { items: tokens, loading: isLoading, error } = useSelector(
-    (state: RootState) => state.tokens
-  );
+  const tokens = useAppSelector((s) => s.tokens.items);
 
-  console.log('🎯 TokenTableContainer state:', {
-    tokensCount: tokens?.length,
-    isLoading,
-    error,
-    firstToken: tokens?.[0]?.name
-  });
-
-  if (isLoading) {
-    console.log('⏳ Still loading...');
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    console.error('❌ Error:', error);
-    return <ErrorMessage message={error} />;
-  }
-
-  if (!tokens || tokens.length === 0) {
-    console.warn('⚠️ No tokens in Redux store!');
+  if (error) return <div className="axiom-card p-4 text-red-400">Error: {error}</div>;
+  if (loading && tokens.length === 0)
     return (
-      <div className="text-white p-8 bg-red-900/20 border border-red-500 rounded">
-        <h1 className="text-2xl mb-4">⚠️ No tokens loaded</h1>
-        <p>Redux state: {JSON.stringify({ tokensCount: tokens?.length, isLoading, error })}</p>
-        <p className="mt-2">Check console for more details</p>
+      <div className="space-y-8">
+        {categories.map((_, i) => (
+          <div key={i} className="axiom-card p-4">
+            <div className="h-6 w-40 skel mb-4" />
+            {[...Array(8)].map((__, r) => (
+              <div key={r} className="h-10 w-full skel mb-2" />
+            ))}
+          </div>
+        ))}
       </div>
     );
-  }
-
-  const newPairs = tokens.filter(t => t.category === 'new-pairs');
-  const finalStretch = tokens.filter(t => t.category === 'final-stretch');
-  const migrated = tokens.filter(t => t.category === 'migrated');
-
-  console.log('📊 Category breakdown:', {
-    total: tokens.length,
-    newPairs: newPairs.length,
-    finalStretch: finalStretch.length,
-    migrated: migrated.length
-  });
 
   return (
-    <div className="space-y-8">
-      <section>
-        <h2 className="text-2xl font-bold mb-4 text-green-400">
-          ✅ New Pairs ({newPairs.length})
-        </h2>
-        <TokenTable category="new-pairs" tokens={tokens} />
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold mb-4 text-yellow-400">
-          ⚡ Final Stretch ({finalStretch.length})
-        </h2>
-        <TokenTable category="final-stretch" tokens={tokens} />
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold mb-4 text-blue-400">
-          🚀 Migrated ({migrated.length})
-        </h2>
-        <TokenTable category="migrated" tokens={tokens} />
-      </section>
+    <div className="space-y-10">
+      {categories.map((cat) => {
+        const list = tokens.filter((t) => t.category === cat);
+        return (
+          <AxiomSection key={cat} title={titleCase(cat)}>
+            <TokenTable tokens={list} />
+          </AxiomSection>
+        );
+      })}
     </div>
   );
 }
