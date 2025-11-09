@@ -15,7 +15,10 @@ export default function TokenFilters() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1">
           <Filter className="w-5 h-5 text-gray-400" />
+          <label htmlFor="token-search" className="sr-only">Search tokens</label>
           <input
+            id="token-search"
+            name="token-search"
             type="text"
             placeholder="Search tokens by name or symbol..."
             value={filters.search}
@@ -28,6 +31,7 @@ export default function TokenFilters() {
           <button
             onClick={() => dispatch(resetFilters())}
             className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
+            aria-label="Clear search filters"
           >
             <X className="w-4 h-4" />
             Clear

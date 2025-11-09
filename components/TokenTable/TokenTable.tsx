@@ -13,19 +13,30 @@ interface TokenTableProps {
 }
 
 export default function TokenTable({ category, tokens }: TokenTableProps) {
+  console.log(`🔍 [${category}] TokenTable received:`, {
+    tokensLength: tokens?.length,
+    category,
+    firstToken: tokens?.[0]?.name
+  });
+
   const [sortState, setSortStateLocal] = useState<SortState>({
     column: null,
     direction: "asc",
   });
 
-  // Filter tokens by category first
   const categoryTokens = useMemo(() => {
-    if (!category || category === 'all') return tokens;
-    return tokens.filter(token => token.category === category);
+    if (!category || category === 'all') {
+      console.log(`✅ [${category}] Returning all ${tokens?.length} tokens`);
+      return tokens;
+    }
+    const filtered = tokens.filter(token => token.category === category);
+    console.log(`✅ [${category}] Filtered to ${filtered.length} tokens`);
+    console.log(`   Sample token categories:`, tokens.slice(0, 3).map(t => `${t.name}: ${t.category}`));
+    return filtered;
   }, [tokens, category]);
 
-  // Apply additional filters (currently returns all tokens)
   const filteredTokens = useFilters(categoryTokens);
+  console.log(`🎯 [${category}] After useFilters: ${filteredTokens?.length} tokens`);
 
   const sortedTokens = useMemo(() => {
     if (!sortState.column || !sortState.direction) {
@@ -44,6 +55,8 @@ export default function TokenTable({ category, tokens }: TokenTableProps) {
     });
   }, [filteredTokens, sortState]);
 
+  console.log(`📋 [${category}] FINAL sortedTokens: ${sortedTokens?.length}`);
+
   const handleSort = (column: keyof Token) => {
     setSortStateLocal((prev) => ({
       column,
@@ -52,24 +65,38 @@ export default function TokenTable({ category, tokens }: TokenTableProps) {
     }));
   };
 
-  if (sortedTokens.length === 0) {
+  if (!sortedTokens || sortedTokens.length === 0) {
+    console.warn(`⚠️ [${category}] NO TOKENS TO DISPLAY!`, {
+      categoryTokens: categoryTokens?.length,
+      filteredTokens: filteredTokens?.length,
+      sortedTokens: sortedTokens?.length
+    });
     return (
-      <div className="w-full p-4 text-center text-gray-400 bg-gray-800 rounded">
-        <p>No tokens in category: {category}</p>
+      <div className="w-full p-6 text-center bg-red-900/20 border border-red-500 rounded">
+        <p className="text-red-400 font-bold text-lg">⚠️ No tokens in category: {category}</p>
+        <div className="mt-4 text-sm text-gray-400 space-y-1">
+          <p>Received: {tokens?.length || 0} tokens</p>
+          <p>Category filtered: {categoryTokens?.length || 0} tokens</p>
+          <p>After filters: {filteredTokens?.length || 0} tokens</p>
+          <p>Check browser console for details</p>
+        </div>
       </div>
     );
   }
 
+  console.log(`✅ [${category}] RENDERING ${sortedTokens.length} ROWS NOW!`);
+
   return (
     <div className="w-full">
       <TokenFilters />
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="overflow-x-auto bg-gray-900 rounded-lg">
+        <table className="w-full border-collapse">
           <TokenHeader sortState={sortState} onSort={handleSort} />
           <tbody>
-            {sortedTokens.map((token) => (
-              <TokenRow key={token.id} token={token} />
-            ))}
+            {sortedTokens.map((token, idx) => {
+              console.log(`  └─ Row ${idx}: ${token.name} (${token.symbol})`);
+              return <TokenRow key={token.id} token={token} />;
+            })}
           </tbody>
         </table>
       </div>

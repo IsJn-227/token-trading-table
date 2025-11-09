@@ -17,38 +17,65 @@ export default function TokenTableContainer() {
     (state: RootState) => state.tokens
   );
 
+  console.log('🎯 TokenTableContainer state:', {
+    tokensCount: tokens?.length,
+    isLoading,
+    error,
+    firstToken: tokens?.[0]?.name
+  });
+
   if (isLoading) {
+    console.log('⏳ Still loading...');
     return <LoadingSpinner />;
   }
 
   if (error) {
+    console.error('❌ Error:', error);
     return <ErrorMessage message={error} />;
   }
 
-  // Show debug info if no tokens
-  if (tokens.length === 0) {
+  if (!tokens || tokens.length === 0) {
+    console.warn('⚠️ No tokens in Redux store!');
     return (
-      <div className="text-white p-8">
-        <h1 className="text-2xl mb-4">No tokens loaded</h1>
-        <p>Check console for errors</p>
+      <div className="text-white p-8 bg-red-900/20 border border-red-500 rounded">
+        <h1 className="text-2xl mb-4">⚠️ No tokens loaded</h1>
+        <p>Redux state: {JSON.stringify({ tokensCount: tokens?.length, isLoading, error })}</p>
+        <p className="mt-2">Check console for more details</p>
       </div>
     );
   }
 
+  const newPairs = tokens.filter(t => t.category === 'new-pairs');
+  const finalStretch = tokens.filter(t => t.category === 'final-stretch');
+  const migrated = tokens.filter(t => t.category === 'migrated');
+
+  console.log('📊 Category breakdown:', {
+    total: tokens.length,
+    newPairs: newPairs.length,
+    finalStretch: finalStretch.length,
+    migrated: migrated.length
+  });
+
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-white">New Pairs</h2>
+        <h2 className="text-2xl font-bold mb-4 text-green-400">
+          ✅ New Pairs ({newPairs.length})
+        </h2>
         <TokenTable category="new-pairs" tokens={tokens} />
       </section>
-      
+
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-white">Final Stretch</h2>
+        <h2 className="text-2xl font-bold mb-4 text-yellow-400">
+          ⚡ Final Stretch ({finalStretch.length})
+        </h2>
         <TokenTable category="final-stretch" tokens={tokens} />
       </section>
-      
+
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-white">Migrated</h2>
+        <h2 className="text-2xl font-bold mb-4 text-blue-400">
+          🚀 Migrated ({migrated.length})
+        </h2>
         <TokenTable category="migrated" tokens={tokens} />
       </section>
     </div>
