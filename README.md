@@ -6,7 +6,8 @@ A pixel-perfect replica of Axiom Trade's token discovery table with real-time pr
 
 - **Deployment**: [Add your Vercel URL here]
 - **Video Demo**: [Add your YouTube link here]
-- **GitHub**: https://github.com/IsJn-227/axiom-token-table
+- **GitHub**: https://github.com/IsJn-227/token-trading-table
+**Live**: https://token-trading-table-65hg3gnyq-ishita-jains-projects-34655167.vercel.app
 
 ## ✨ Features
 
@@ -270,3 +271,6 @@ Your Name
 **Built with ❤️ for the Axiom Trade Frontend Assessment**
 
 
+
+
+**YouTube Demo (1–2 min):** _paste link here_
