@@ -20,12 +20,19 @@ export default function TokenTable({ category, tokens }: TokenTableProps) {
 
   // Filter tokens by category first
   const categoryTokens = useMemo(() => {
-    if (!category || category === 'all') return tokens;
-    return tokens.filter(token => token.category === category);
+    if (!category || category === 'all') {
+      console.log('📋 TokenTable - showing all tokens:', tokens.length);
+      return tokens;
+    }
+    const filtered = tokens.filter(token => token.category === category);
+    console.log(`📋 TokenTable - category: ${category}, filtered: ${filtered.length} tokens`);
+    return filtered;
   }, [tokens, category]);
 
   // Apply additional filters from the filters slice
   const filteredTokens = useFilters(categoryTokens);
+  
+  console.log(`🔍 TokenTable - after filters: ${filteredTokens.length} tokens`);
 
   const sortedTokens = useMemo(() => {
     if (!sortState.column || !sortState.direction) {
@@ -51,6 +58,14 @@ export default function TokenTable({ category, tokens }: TokenTableProps) {
         prev.column === column && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
+
+  if (sortedTokens.length === 0) {
+    return (
+      <div className="w-full p-8 text-center text-gray-400">
+        <p>No tokens found for category: {category}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

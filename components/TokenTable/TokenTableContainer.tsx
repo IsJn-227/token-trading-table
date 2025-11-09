@@ -17,19 +17,36 @@ export default function TokenTableContainer() {
     (state: RootState) => state.tokens
   );
 
+  console.log('🎨 TokenTableContainer render - tokens:', tokens.length, 'loading:', isLoading, 'error:', error);
+
   if (isLoading) {
+    console.log('⏳ Showing loading spinner');
     return <LoadingSpinner />;
   }
 
   if (error) {
+    console.log('❌ Showing error:', error);
     return <ErrorMessage message={error} />;
   }
 
+  console.log('✅ Rendering tables with', tokens.length, 'tokens');
+
   return (
     <div className="space-y-8">
-      <TokenTable category="new-pairs" tokens={tokens} />
-      <TokenTable category="final-stretch" tokens={tokens} />
-      <TokenTable category="migrated" tokens={tokens} />
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-white">New Pairs</h2>
+        <TokenTable category="new-pairs" tokens={tokens} />
+      </div>
+      
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-white">Final Stretch</h2>
+        <TokenTable category="final-stretch" tokens={tokens} />
+      </div>
+      
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-white">Migrated</h2>
+        <TokenTable category="migrated" tokens={tokens} />
+      </div>
     </div>
   );
 }
