@@ -1,0 +1,91 @@
+﻿VIDEO RECORDING GUIDE (90-120 seconds)
+========================================
+
+SETUP:
+1. Open your deployment URL in browser
+2. Set browser window to 1920x1080
+3. Close unnecessary tabs/windows
+4. Ready your screen recorder
+
+RECORDING SEQUENCE:
+------------------
+
+[0-10s] INTRO
+- Show landing page
+- Show all 3 tabs: New Pairs, Final Stretch, Migrated
+
+[10-25s] TAB NAVIGATION
+- Click each tab
+- Show tokens loading
+- Show different data in each tab
+
+[25-40s] FILTERS
+- Click "Filters" button
+- Show popover opening
+- Adjust "Min Market Cap"
+- Toggle "Verified Only"
+- Show filter badge count
+- Show filtered results
+- Click "Reset"
+
+[40-55s] TOKEN MODAL
+- Click any token row
+- Show modal opening
+- Scroll through details
+- Show risk metrics
+- Show trading stats
+- Close modal
+
+[55-70s] REAL-TIME UPDATES
+- Keep page open
+- Show prices changing
+- Point to green flashes (price up)
+- Point to red flashes (price down)
+
+[70-85s] SORTING & TOOLTIPS
+- Click "Price" header to sort
+- Click again to reverse
+- Click "Market Cap" header
+- Hover over info icons for tooltips
+
+[85-100s] RESPONSIVE
+- Press F12 (DevTools)
+- Click device toolbar
+- Show mobile (375px)
+- Show tablet (768px)
+- Show minimum (320px)
+
+[100-110s] PERFORMANCE (Optional)
+- Show Lighthouse score screenshot
+
+[110-120s] CLOSING
+- Show GitHub repo
+- Show README
+- Thank you
+
+HOW TO RECORD:
+--------------
+Option 1 - Windows Game Bar:
+  1. Press Win+G
+  2. Click Record button
+  3. Follow script above
+  4. Press Win+Alt+R to stop
+  5. Video saved to: Videos\Captures\
+
+Option 2 - OBS Studio:
+  1. Download from: https://obsproject.com
+  2. Add Display Capture
+  3. Click Start Recording
+  4. Follow script
+  5. Click Stop Recording
+
+AFTER RECORDING:
+----------------
+1. Upload to YouTube
+2. Go to: https://studio.youtube.com
+3. Click "Create" → "Upload videos"
+4. Title: "Axiom Token Table - Frontend Demo"
+5. Set Visibility: UNLISTED
+6. Publish
+7. Copy the video URL
+

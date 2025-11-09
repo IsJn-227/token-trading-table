@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Filter, X } from "lucide-react";
 import { setFilter, resetFilters } from "@/store/slices/filterSlice";
-import { RootState } from "@/store";
+import { RootState } from "@/store/index";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { Button } from "../ui/Button";
 
@@ -86,3 +86,4 @@ export default function TokenFilters() {
     </Popover>
   );
 }
+

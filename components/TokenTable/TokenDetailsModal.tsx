@@ -17,7 +17,7 @@ export default function TokenDetailsModal({ token }: TokenDetailsModalProps) {
     { label: "24h Volume", value: formatNumber(token.volume24h), icon: TrendingUp },
     { label: "Liquidity", value: formatNumber(token.liquidity), icon: TrendingUp },
     { label: "Holders", value: token.holders.toLocaleString(), icon: Users },
-    { label: "Age", value: formatAge(token.age), icon: Clock },
+    { label: "Age", value: formatAge(token.age.toString()), icon: Clock },
   ];
 
   const riskMetrics = [
@@ -116,3 +116,5 @@ export default function TokenDetailsModal({ token }: TokenDetailsModalProps) {
     </DialogContent>
   );
 }
+
+

@@ -1,27 +1,31 @@
 ﻿"use client";
 
 import React, { useState, useMemo } from "react";
-import { useDispatch } from "react-redux";
 import { Token, SortState } from "@/types/token";
-import { setSortState } from "@/store/slices/tokenSlice";
 import { useFilters } from "@/hooks/useFilters";
 import TokenHeader from "./TokenHeader";
 import TokenRow from "./TokenRow";
 import TokenFilters from "./TokenFilters";
 
 interface TokenTableProps {
-  category: Token["category"];
+  category: Token["category"] | "all";
   tokens: Token[];
 }
 
 export default function TokenTable({ category, tokens }: TokenTableProps) {
-  const dispatch = useDispatch();
   const [sortState, setSortStateLocal] = useState<SortState>({
     column: null,
-    direction: null,
+    direction: "asc",
   });
 
-  const filteredTokens = useFilters(tokens, category);
+  // Filter tokens by category first
+  const categoryTokens = useMemo(() => {
+    if (!category || category === 'all') return tokens;
+    return tokens.filter(token => token.category === category);
+  }, [tokens, category]);
+
+  // Apply additional filters from the filters slice
+  const filteredTokens = useFilters(categoryTokens);
 
   const sortedTokens = useMemo(() => {
     if (!sortState.column || !sortState.direction) {
@@ -32,68 +36,34 @@ export default function TokenTable({ category, tokens }: TokenTableProps) {
       const aValue = a[sortState.column!];
       const bValue = b[sortState.column!];
 
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortState.direction === "asc"
-          ? aValue - bValue
-          : bValue - aValue;
-      }
+      if (aValue === undefined || bValue === undefined) return 0;
+      if (aValue === bValue) return 0;
 
-      const aStr = String(aValue).toLowerCase();
-      const bStr = String(bValue).toLowerCase();
-
-      if (sortState.direction === "asc") {
-        return aStr.localeCompare(bStr);
-      }
-      return bStr.localeCompare(aStr);
+      const comparison = aValue > bValue ? 1 : -1;
+      return sortState.direction === "asc" ? comparison : -comparison;
     });
   }, [filteredTokens, sortState]);
 
   const handleSort = (column: keyof Token) => {
-    const newDirection =
-      sortState.column === column
-        ? sortState.direction === "asc"
-          ? "desc"
-          : sortState.direction === "desc"
-          ? null
-          : "asc"
-        : "asc";
-
-    const newSortState = {
-      column: newDirection ? column : null,
-      direction: newDirection,
-    };
-
-    setSortStateLocal(newSortState);
-    dispatch(setSortState(newSortState));
+    setSortStateLocal((prev) => ({
+      column,
+      direction:
+        prev.column === column && prev.direction === "asc" ? "desc" : "asc",
+    }));
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full">
       <TokenFilters />
-
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <TokenHeader sortState={sortState} onSort={handleSort} />
-            <tbody>
-              {sortedTokens.length === 0 ? (
-                <tr>
-                  <td colSpan={10} className="text-center py-12 text-gray-500">
-                    No tokens found matching the filters
-                  </td>
-                </tr>
-              ) : (
-                sortedTokens.map((token) => (
-                  <TokenRow key={token.id} token={token} />
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="text-center text-sm text-gray-500">
-        Showing {sortedTokens.length} of {filteredTokens.length} tokens
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <TokenHeader sortState={sortState} onSort={handleSort} />
+          <tbody>
+            {sortedTokens.map((token) => (
+              <TokenRow key={token.id} token={token} />
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

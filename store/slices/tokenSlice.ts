@@ -23,6 +23,13 @@ export interface Token {
   insidersPercent: number
   priceDirection?: 'up' | 'down' | 'neutral'
   lastUpdate?: number
+  category?: 'new-pairs' | 'final-stretch' | 'migrated'
+  trending?: boolean
+}
+
+export interface SortState {
+  column: keyof Token | null
+  direction: 'asc' | 'desc'
 }
 
 interface TokenState {
@@ -30,13 +37,18 @@ interface TokenState {
   loading: boolean
   error: string | null
   selectedToken: Token | null
+  sortState: SortState
 }
 
 const initialState: TokenState = {
   items: [],
   loading: false,
   error: null,
-  selectedToken: null
+  selectedToken: null,
+  sortState: {
+    column: null,
+    direction: 'asc'
+  }
 }
 
 const tokenSlice = createSlice({
@@ -65,9 +77,13 @@ const tokenSlice = createSlice({
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload
+    },
+    setSortState: (state, action: PayloadAction<SortState>) => {
+      state.sortState = action.payload
     }
   }
 })
 
-export const { setTokens, updateTokenPrice, setSelectedToken, setLoading, setError } = tokenSlice.actions
+export const { setTokens, updateTokenPrice, setSelectedToken, setLoading, setError, setSortState } = tokenSlice.actions
 export default tokenSlice.reducer
+

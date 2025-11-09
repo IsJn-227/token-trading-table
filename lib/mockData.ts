@@ -29,6 +29,9 @@ export function generateMockTokens(count: number): Token[] {
     top10Holders: Math.random() * 60,
     snipersPercent: Math.random() * 25,
     insidersPercent: Math.random() * 15,
-    priceDirection: 'neutral' as const
+    priceDirection: 'neutral' as const,
+    trending: Math.random() > 0.5
   }))
 }
+
+export const mockTokens = generateMockTokens(20);

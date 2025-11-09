@@ -19,6 +19,16 @@
   top10Holders: number
   snipersPercent: number
   insidersPercent: number
-  priceDirection?: 'up' | 'down' | 'neutral'
+  priceDirection?: "up" | "down" | "neutral"
   lastUpdate?: number
+  category?: "new-pairs" | "final-stretch" | "migrated"
+  trending?: boolean
 }
+
+export interface SortState {
+  column: keyof Token | null
+  direction: "asc" | "desc"
+}
+
+export type SortField = keyof Token
+export type SortDirection = "asc" | "desc"
