@@ -1,0 +1,14 @@
+﻿node_modules/
+.next/
+out/
+build/
+dist/
+.env
+.env.local
+.vercel
+.lighthouseci/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
