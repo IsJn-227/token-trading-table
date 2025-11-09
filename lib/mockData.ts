@@ -2,10 +2,13 @@
 
 const tokenNames = [
   'Solana Dog', 'Moon Token', 'Degen Ape', 'Pepe Coin', 'Shiba Moon',
-  'Rocket Dog', 'Space Pepe', 'Diamond Hands', 'To The Moon', 'Lambo Coin'
+  'Rocket Dog', 'Space Pepe', 'Diamond Hands', 'To The Moon', 'Lambo Coin',
+  'SafeMoon V2', 'ElonDoge', 'BabyShark', 'MoonRocket', 'DiamondPaws'
 ]
 
-const symbols = ['SOLDOG', 'MOON', 'DAPE', 'PEPE', 'SHMOON', 'RDOG', 'SPEPE', 'DMOND', 'TTM', 'LAMBO']
+const symbols = ['SOLDOG', 'MOON', 'DAPE', 'PEPE', 'SHMOON', 'RDOG', 'SPEPE', 'DMOND', 'TTM', 'LAMBO', 'SAFE', 'EDOGE', 'BSHARK', 'MRKT', 'DPAWS']
+
+const categories: Array<'new-pairs' | 'final-stretch' | 'migrated'> = ['new-pairs', 'final-stretch', 'migrated']
 
 export function generateMockTokens(count: number): Token[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -30,8 +33,9 @@ export function generateMockTokens(count: number): Token[] {
     snipersPercent: Math.random() * 25,
     insidersPercent: Math.random() * 15,
     priceDirection: 'neutral' as const,
-    trending: Math.random() > 0.5
+    trending: Math.random() > 0.5,
+    category: categories[i % 3]
   }))
 }
 
-export const mockTokens = generateMockTokens(20);
+export const mockTokens = generateMockTokens(30);
