@@ -5,7 +5,7 @@ A pixel-perfect replica of Axiom Trade's token discovery table with real-time pr
 ## 🌐 Live Demo
 
 - **Deployment**: https://token-trading-table-65hg3gnyq-ishita-jains-projects-34655167.vercel.app/
-- **Video Demo**: [Add your YouTube link here]
+- **Video Demo**: https://www.youtube.com/watch?v=cgDUDux78Cw
 - **GitHub**: https://github.com/IsJn-227/token-trading-table
 **Live**: https://token-trading-table-65hg3gnyq-ishita-jains-projects-34655167.vercel.app
 
