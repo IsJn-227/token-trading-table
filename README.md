@@ -258,7 +258,7 @@ MIT
 
 ## 👤 Author
 
-Your Name
+Ishita Jain
 
 ## 🙏 Acknowledgments
 
@@ -268,10 +268,4 @@ Your Name
 
 ---
 
-**Built with ❤️ for the Axiom Trade Frontend Assessment**
-
-
-
-
-**YouTube Demo (1–2 min):** _paste link here_
 
